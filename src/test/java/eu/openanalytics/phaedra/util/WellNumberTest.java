@@ -1,11 +1,7 @@
 package eu.openanalytics.phaedra.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class WellNumberTest {
 
@@ -16,13 +12,13 @@ public class WellNumberTest {
 		int wellNr = 61;
 		int[] wellPosition = { 3, 13 };
 		int colsPerRow = 24;
-		
-		assertEquals(wellCoordinate, WellNumberUtils.getWellCoordinate(wellPosition[0], wellPosition[1]));
-		assertTrue(Arrays.equals(wellPosition, WellNumberUtils.getWellPosition(wellNr, colsPerRow)));
-		assertEquals(wellPosition[0], WellNumberUtils.getWellRowNumber(wellCoordinate));
-		assertEquals(wellPosition[1], WellNumberUtils.getWellColumnNumber(wellCoordinate));
-		assertEquals(wellNr, WellNumberUtils.getWellNr(wellCoordinate, colsPerRow));
-		assertEquals(wellRowLabel, WellNumberUtils.getWellRowLabel(wellPosition[0]));
-		assertEquals(wellNr, WellNumberUtils.getWellNr(wellPosition[0], wellPosition[1], colsPerRow));
+
+		Assertions.assertEquals(wellCoordinate, WellNumberUtils.getWellCoordinate(wellPosition[0], wellPosition[1]));
+		Assertions.assertArrayEquals(wellPosition, WellNumberUtils.getWellPosition(wellNr, colsPerRow));
+		Assertions.assertEquals(wellPosition[0], WellNumberUtils.getWellRowNumber(wellCoordinate));
+		Assertions.assertEquals(wellPosition[1], WellNumberUtils.getWellColumnNumber(wellCoordinate));
+		Assertions.assertEquals(wellNr, WellNumberUtils.getWellNr(wellCoordinate, colsPerRow));
+		Assertions.assertEquals(wellRowLabel, WellNumberUtils.getWellRowLabel(wellPosition[0]));
+		Assertions.assertEquals(wellNr, WellNumberUtils.getWellNr(wellPosition[0], wellPosition[1], colsPerRow));
 	}
 }
