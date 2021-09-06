@@ -40,6 +40,19 @@
             <version>5.7.2</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>oa-nexus-snapshots</id>
+            <name>OpenAnalytics Snapshots Repository</name>
+            <url>https://nexus.openanalytics.eu/repository/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>oa-nexus-releases</id>
+            <name>OpenAnalytics Release Repository</name>
+            <url>https://nexus.openanalytics.eu/repository/releases</url>
+        </repository>
+    </distributionManagement>
+
 </project>

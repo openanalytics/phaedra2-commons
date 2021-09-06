@@ -50,6 +50,20 @@ pipeline {
             }
         }
 
+        stage("Deploy to Nexus") {
+            steps {
+                container('builder') {
+
+                    configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
+
+                        sh 'mvn -s $MAVEN_SETTINGS_RSB deploy -DskipTests -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
+
+                    }
+
+                }
+            }
+        }
+
         stage('Cache maven repository to S3') {
             steps {
                 container('builder') {
