@@ -10,7 +10,7 @@ public class AuthorizationHelper {
 	private static final String CLAIM_ROLES = "realm_access.roles";
 	
 	private static final String ROLE_ADMIN = "phaedra2-admin";
-	private static final String ROLE_USER = "phaedra2-admin";
+	private static final String ROLE_USER = "phaedra2-user";
 	
 	private static final String ROLE_TEAM_PREFIX = "phaedra2-team-";
 
