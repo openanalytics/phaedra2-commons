@@ -2,6 +2,7 @@ package eu.openanalytics.phaedra.util.auth;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +10,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 public class AuthorizationHelper {
 
-	private static final String CLAIM_ROLES = "realm_access.roles";
+	private static final String CLAIM_REALM_ACCESS = "realm_access";
+	private static final String CLAIM_ROLES = "roles";
 	
 	private static final String ROLE_ADMIN = "phaedra2-admin";
 	private static final String ROLE_USER = "phaedra2-user";
@@ -33,12 +35,14 @@ public class AuthorizationHelper {
 	public static boolean hasRole(Jwt accessToken, String roleName) {
 		if (accessToken == null) return false;
 		
-		List<String> roles = accessToken.getClaimAsStringList(CLAIM_ROLES);
+		Map<String, Object> realmAccess = accessToken.getClaimAsMap(CLAIM_REALM_ACCESS);
+		if (realmAccess == null) return false;
+		
+		List<?> roles = (List<?>) realmAccess.get(CLAIM_ROLES);
 		log.debug(String.format("Inspecting JWT token for role '%s'. Available roles: %s", roleName, roles));
 		
 		if (roles == null || roles.isEmpty()) return false;
-		
-		return roles.stream().anyMatch(role -> role.equalsIgnoreCase(roleName));
+		return roles.stream().anyMatch(role -> roleName.equalsIgnoreCase(String.valueOf(role)));
 	}
 	
 }
