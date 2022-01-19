@@ -3,9 +3,12 @@ package eu.openanalytics.phaedra.util.auth;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 public class AuthorizationHelper {
@@ -19,6 +22,12 @@ public class AuthorizationHelper {
 	private static final String ROLE_TEAM_PREFIX = "phaedra2-team-";
 
 	private static final Logger log = LoggerFactory.getLogger(AuthorizationHelper.class);
+	
+	public static boolean checkForCurrentPrincipal(Predicate<Object> tester) {
+		Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+		if (currentAuth == null || currentAuth.getPrincipal() == null || tester == null) return false;
+		return tester.test(currentAuth.getPrincipal());
+	}
 	
 	public static boolean hasUserAccess(Object principal) {
 		return hasRole(principal, ROLE_USER);
