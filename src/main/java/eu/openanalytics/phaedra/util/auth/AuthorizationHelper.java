@@ -20,20 +20,28 @@ public class AuthorizationHelper {
 
 	private static final Logger log = LoggerFactory.getLogger(AuthorizationHelper.class);
 	
-	public static boolean hasUserAccess(Jwt accessToken) {
-		return hasRole(accessToken, ROLE_USER);
+	public static boolean hasUserAccess(Object principal) {
+		return hasRole(principal, ROLE_USER);
 	}
 	
-	public static boolean hasAdminAccess(Jwt accessToken) {
-		return hasRole(accessToken, ROLE_ADMIN);
+	public static boolean hasAdminAccess(Object principal) {
+		return hasRole(principal, ROLE_ADMIN);
 	}
 	
-	public static boolean hasTeamAccess(Jwt accessToken, String... teams) {
-		return hasAdminAccess(accessToken) || Arrays.stream(teams).anyMatch(team -> hasRole(accessToken, ROLE_TEAM_PREFIX + team));
+	public static boolean hasTeamAccess(Object principal, String... teams) {
+		return hasAdminAccess(principal) || Arrays.stream(teams).anyMatch(team -> hasRole(principal, ROLE_TEAM_PREFIX + team));
 	}
 	
-	public static boolean hasRole(Jwt accessToken, String roleName) {
-		if (accessToken == null) return false;
+	public static boolean hasRole(Object principal, String roleName) {
+		if (principal == null) return false;
+		
+		Jwt accessToken = null;
+		if (principal instanceof Jwt) {
+			accessToken = (Jwt) principal;
+		} else {
+			log.debug(String.format("Unsupported principal type: %s. Only JWTs are supported.", principal));
+			return false;
+		}
 		
 		Map<String, Object> realmAccess = accessToken.getClaimAsMap(CLAIM_REALM_ACCESS);
 		if (realmAccess == null) return false;
