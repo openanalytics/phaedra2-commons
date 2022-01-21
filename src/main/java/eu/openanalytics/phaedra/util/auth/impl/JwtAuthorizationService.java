@@ -1,4 +1,4 @@
-package eu.openanalytics.phaedra.util.auth;
+package eu.openanalytics.phaedra.util.auth.impl;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,82 +15,77 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.server.ResponseStatusException;
 
-public class AuthorizationHelper {
+import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
+
+public class JwtAuthorizationService implements IAuthorizationService {
 
 	private static final String CLAIM_REALM_ACCESS = "realm_access";
 	private static final String CLAIM_ROLES = "roles";
-	
 	private static final String ROLE_ADMIN = "phaedra2-admin";
 	private static final String ROLE_USER = "phaedra2-user";
-	
 	private static final String ROLE_TEAM_PREFIX = "phaedra2-team-";
-
 	private static final String DEFAULT_ACCESS_DENIED_MSG = "Not authorized to perform this operation";
 	
-	private static final Logger log = LoggerFactory.getLogger(AuthorizationHelper.class);
+	private static final Logger log = LoggerFactory.getLogger(JwtAuthorizationService.class);
 	
-	public static void performAccessCheck(Predicate<Object> accessCheck) {
+	@Override
+	public void performAccessCheck(Predicate<Object> accessCheck) {
 		performAccessCheck(accessCheck, null);
 	}
-	
-	public static void performAccessCheck(Predicate<Object> accessCheck, Function<AccessDeniedException, String> messageCustomizer) {
+
+	@Override
+	public void performAccessCheck(Predicate<Object> accessCheck, Function<AccessDeniedException, String> messageCustomizer) {
 		try {
 			boolean access = checkForCurrentPrincipal(accessCheck);
 			if (!access) throw new AccessDeniedException(DEFAULT_ACCESS_DENIED_MSG);
 		} catch (AccessDeniedException e) {
 			String msg = (messageCustomizer == null) ? e.getMessage() : messageCustomizer.apply(e);
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, msg);
-		}
+		}		
 	}
-	
-	public static void performOwnershipCheck(String entityOwner) {
+
+	@Override
+	public void performOwnershipCheck(String entityOwner) {
 		performOwnershipCheck(entityOwner, null);
 	}
-	
-	public static void performOwnershipCheck(String entityOwner, String errorMessage) {
+
+	@Override
+	public void performOwnershipCheck(String entityOwner, String errorMessage) {
 		String currentPrincipalName = getCurrentPrincipalName();
 		if (currentPrincipalName == null || !currentPrincipalName.equals(entityOwner)) {
 			String msg = (errorMessage == null) ? DEFAULT_ACCESS_DENIED_MSG : errorMessage;
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, msg);
 		}
 	}
-	
-	public static String getCurrentPrincipalName() {
+
+	@Override
+	public String getCurrentPrincipalName() {
 		Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
 		return (currentAuth == null) ? null : currentAuth.getName();
 	}
-	
-	public static boolean checkForCurrentPrincipal(Predicate<Object> tester) {
+
+	@Override
+	public boolean hasUserAccess() {
+		return checkForCurrentPrincipal(principal -> (hasAdminAccess() || hasRole(principal, ROLE_USER)));
+	}
+
+	@Override
+	public boolean hasAdminAccess() {
+		return checkForCurrentPrincipal(principal -> hasRole(principal, ROLE_ADMIN));
+	}
+
+	@Override
+	public boolean hasTeamAccess(String... teams) {
+		return checkForCurrentPrincipal(principal -> hasAdminAccess() || Arrays.stream(teams).anyMatch(team -> hasRole(principal, ROLE_TEAM_PREFIX + team)));
+	}
+
+	private static boolean checkForCurrentPrincipal(Predicate<Object> tester) {
 		Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
 		if (currentAuth == null || currentAuth.getPrincipal() == null || tester == null) return false;
 		return tester.test(currentAuth.getPrincipal());
 	}
 	
-	public static boolean hasUserAccess() {
-		return checkForCurrentPrincipal(principal -> hasUserAccess(principal));
-	}
-	
-	public static boolean hasUserAccess(Object principal) {
-		return hasAdminAccess(principal) || hasRole(principal, ROLE_USER);
-	}
-	
-	public static boolean hasAdminAccess() {
-		return checkForCurrentPrincipal(principal -> hasAdminAccess(principal));
-	}
-	
-	public static boolean hasAdminAccess(Object principal) {
-		return hasRole(principal, ROLE_ADMIN);
-	}
-	
-	public static boolean hasTeamAccess(String... teams) {
-		return checkForCurrentPrincipal(principal -> hasTeamAccess(principal, teams));
-	}
-
-	public static boolean hasTeamAccess(Object principal, String... teams) {
-		return hasAdminAccess(principal) || Arrays.stream(teams).anyMatch(team -> hasRole(principal, ROLE_TEAM_PREFIX + team));
-	}
-	
-	public static boolean hasRole(Object principal, String roleName) {
+	private static boolean hasRole(Object principal, String roleName) {
 		if (principal == null) return false;
 		
 		Jwt accessToken = null;
@@ -110,5 +105,5 @@ public class AuthorizationHelper {
 		if (roles == null || roles.isEmpty()) return false;
 		return roles.stream().anyMatch(role -> roleName.equalsIgnoreCase(String.valueOf(role)));
 	}
-	
+
 }
