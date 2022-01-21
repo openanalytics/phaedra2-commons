@@ -25,6 +25,8 @@ public class AuthorizationHelper {
 	
 	private static final String ROLE_TEAM_PREFIX = "phaedra2-team-";
 
+	private static final String DEFAULT_ACCESS_DENIED_MSG = "Not authorized to perform this operation";
+	
 	private static final Logger log = LoggerFactory.getLogger(AuthorizationHelper.class);
 	
 	public static void performAccessCheck(Predicate<Object> accessCheck) {
@@ -34,11 +36,28 @@ public class AuthorizationHelper {
 	public static void performAccessCheck(Predicate<Object> accessCheck, Function<AccessDeniedException, String> messageCustomizer) {
 		try {
 			boolean access = checkForCurrentPrincipal(accessCheck);
-			if (!access) throw new AccessDeniedException("Not authorized to perform this operation.");
+			if (!access) throw new AccessDeniedException(DEFAULT_ACCESS_DENIED_MSG);
 		} catch (AccessDeniedException e) {
 			String msg = (messageCustomizer == null) ? e.getMessage() : messageCustomizer.apply(e);
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, msg);
 		}
+	}
+	
+	public static void performOwnershipCheck(String entityOwner) {
+		performOwnershipCheck(entityOwner, null);
+	}
+	
+	public static void performOwnershipCheck(String entityOwner, String errorMessage) {
+		String currentPrincipalName = getCurrentPrincipalName();
+		if (currentPrincipalName == null || !currentPrincipalName.equals(entityOwner)) {
+			String msg = (errorMessage == null) ? DEFAULT_ACCESS_DENIED_MSG : errorMessage;
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, msg);
+		}
+	}
+	
+	public static String getCurrentPrincipalName() {
+		Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+		return (currentAuth == null) ? null : currentAuth.getName();
 	}
 	
 	public static boolean checkForCurrentPrincipal(Predicate<Object> tester) {
