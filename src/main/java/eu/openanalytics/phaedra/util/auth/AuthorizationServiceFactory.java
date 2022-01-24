@@ -6,12 +6,9 @@ import eu.openanalytics.phaedra.util.auth.impl.MockAuthorizationService;
 public class AuthorizationServiceFactory {
 
 	public static IAuthorizationService create() {
-		try {
-			//TODO Find a better way to handle this in test contexts
-			Class.forName("org.springframework.boot.test.context.SpringBootTest");
+		if (AuthenticationConfigHelper.isInTestScope()) {
 			return new MockAuthorizationService();
-		} catch (ClassNotFoundException e) {
-			return new JwtAuthorizationService();
 		}
+		return new JwtAuthorizationService();
 	}
 }
