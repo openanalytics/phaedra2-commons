@@ -31,7 +31,7 @@ public class MockAuthorizationService implements IAuthorizationService {
 
 	@Override
 	public String getCurrentPrincipalName() {
-		return null;
+		return "testuser";
 	}
 
 	@Override
