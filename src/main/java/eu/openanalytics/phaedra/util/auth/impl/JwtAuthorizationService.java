@@ -71,6 +71,7 @@ public class JwtAuthorizationService implements IAuthorizationService {
 
 	@Override
 	public void performOwnershipCheck(String entityOwner, String errorMessage) {
+		if (hasAdminAccess()) return;
 		String currentPrincipalName = getCurrentPrincipalName();
 		if (currentPrincipalName == null || !currentPrincipalName.equals(entityOwner)) {
 			String msg = (errorMessage == null) ? DEFAULT_ACCESS_DENIED_MSG : errorMessage;
