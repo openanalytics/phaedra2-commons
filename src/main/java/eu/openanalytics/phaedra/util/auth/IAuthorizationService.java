@@ -34,6 +34,7 @@ public interface IAuthorizationService {
 	public void performOwnershipCheck(String entityOwner, String errorMessage);
 	
 	public String getCurrentPrincipalName();
+	public String getCurrentBearerToken();
 	
 	public boolean hasUserAccess();
 	public boolean hasAdminAccess();

@@ -55,6 +55,11 @@ public class MockAuthorizationService implements IAuthorizationService {
 	}
 
 	@Override
+	public String getCurrentBearerToken() {
+		return "mock token";
+	}
+	
+	@Override
 	public boolean hasUserAccess() {
 		return true;
 	}

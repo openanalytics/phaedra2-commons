@@ -86,6 +86,15 @@ public class JwtAuthorizationService implements IAuthorizationService {
 	}
 
 	@Override
+	public String getCurrentBearerToken() {
+		Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+		if (currentAuth == null) return null;
+		Jwt accessToken = getJWT(currentAuth.getPrincipal());
+		if (accessToken == null) return null;
+		return accessToken.getTokenValue();
+	}
+	
+	@Override
 	public boolean hasUserAccess() {
 		return checkForCurrentPrincipal(principal -> (hasAdminAccess() || hasRole(principal, ROLE_USER)));
 	}
@@ -109,13 +118,8 @@ public class JwtAuthorizationService implements IAuthorizationService {
 	private static boolean hasRole(Object principal, String roleName) {
 		if (principal == null) return false;
 		
-		Jwt accessToken = null;
-		if (principal instanceof Jwt) {
-			accessToken = (Jwt) principal;
-		} else {
-			log.debug(String.format("Unsupported principal type: %s. Only JWTs are supported.", principal));
-			return false;
-		}
+		Jwt accessToken = getJWT(principal);
+		if (accessToken == null) return false;
 		
 		Map<String, Object> realmAccess = accessToken.getClaimAsMap(CLAIM_REALM_ACCESS);
 		if (realmAccess == null) return false;
@@ -127,4 +131,13 @@ public class JwtAuthorizationService implements IAuthorizationService {
 		return roles.stream().anyMatch(role -> roleName.equalsIgnoreCase(String.valueOf(role)));
 	}
 
+	private static Jwt getJWT(Object principal) {
+		Jwt accessToken = null;
+		if (principal instanceof Jwt) {
+			accessToken = (Jwt) principal;
+		} else {
+			log.debug(String.format("Unsupported principal type: %s. Only JWTs are supported.", principal));
+		}
+		return accessToken;
+	}
 }
