@@ -26,9 +26,13 @@ import eu.openanalytics.phaedra.util.auth.impl.MockAuthorizationService;
 public class AuthorizationServiceFactory {
 
 	public static IAuthorizationService create() {
+		return create(null);
+	}
+	
+	public static IAuthorizationService create(ClientCredentialsTokenGenerator ccTokenGen) {
 		if (AuthenticationConfigHelper.isInTestScope()) {
 			return new MockAuthorizationService();
 		}
-		return new JwtAuthorizationService();
+		return new JwtAuthorizationService(ccTokenGen);
 	}
 }

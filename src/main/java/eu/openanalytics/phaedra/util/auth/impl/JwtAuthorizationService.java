@@ -35,6 +35,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.server.ResponseStatusException;
 
+import eu.openanalytics.phaedra.util.auth.ClientCredentialsTokenGenerator;
 import eu.openanalytics.phaedra.util.auth.IAuthorizationService;
 
 public class JwtAuthorizationService implements IAuthorizationService {
@@ -47,6 +48,12 @@ public class JwtAuthorizationService implements IAuthorizationService {
 	private static final String DEFAULT_ACCESS_DENIED_MSG = "Not authorized to perform this operation";
 	
 	private static final Logger log = LoggerFactory.getLogger(JwtAuthorizationService.class);
+	
+	private ClientCredentialsTokenGenerator clientCredentialsTokenGenerator;
+	
+	public JwtAuthorizationService(ClientCredentialsTokenGenerator clientCredentialsTokenGenerator) {
+		this.clientCredentialsTokenGenerator = clientCredentialsTokenGenerator;
+	}
 	
 	@Override
 	public void performAccessCheck(Predicate<Object> accessCheck) {
@@ -87,11 +94,20 @@ public class JwtAuthorizationService implements IAuthorizationService {
 
 	@Override
 	public String getCurrentBearerToken() {
+		// Attempt to use the current auth context, if there is one
 		Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
-		if (currentAuth == null) return null;
-		Jwt accessToken = getJWT(currentAuth.getPrincipal());
-		if (accessToken == null) return null;
-		return accessToken.getTokenValue();
+		if (currentAuth != null) {
+			Jwt accessToken = getJWT(currentAuth.getPrincipal());
+			if (accessToken == null) return null;
+			return accessToken.getTokenValue();
+		}
+
+		// Attempt to use client credentials, if there is no user auth context
+		if (clientCredentialsTokenGenerator != null) {
+			return clientCredentialsTokenGenerator.obtainToken().getTokenValue();
+		}
+		
+		return null;
 	}
 	
 	@Override
