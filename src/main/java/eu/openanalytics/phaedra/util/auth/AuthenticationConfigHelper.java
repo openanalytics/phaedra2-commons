@@ -45,6 +45,7 @@ public class AuthenticationConfigHelper {
 	}
 	
 	public static boolean isInTestScope() {
+		if (Boolean.valueOf(System.getProperty("phaedra2.testmode"))) return true;
 		try {
 			Class.forName("org.springframework.boot.test.context.SpringBootTest");
 			return true;
