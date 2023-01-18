@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -46,15 +46,15 @@ public class JwtAuthorizationService implements IAuthorizationService {
 	private static final String ROLE_USER = "phaedra2-user";
 	private static final String ROLE_TEAM_PREFIX = "phaedra2-team-";
 	private static final String DEFAULT_ACCESS_DENIED_MSG = "Not authorized to perform this operation";
-	
+
 	private static final Logger log = LoggerFactory.getLogger(JwtAuthorizationService.class);
-	
+
 	private ClientCredentialsTokenGenerator clientCredentialsTokenGenerator;
-	
+
 	public JwtAuthorizationService(ClientCredentialsTokenGenerator clientCredentialsTokenGenerator) {
 		this.clientCredentialsTokenGenerator = clientCredentialsTokenGenerator;
 	}
-	
+
 	@Override
 	public void performAccessCheck(Predicate<Object> accessCheck) {
 		performAccessCheck(accessCheck, null);
@@ -68,7 +68,7 @@ public class JwtAuthorizationService implements IAuthorizationService {
 		} catch (AccessDeniedException e) {
 			String msg = (messageCustomizer == null) ? e.getMessage() : messageCustomizer.apply(e);
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, msg);
-		}		
+		}
 	}
 
 	@Override
@@ -106,10 +106,10 @@ public class JwtAuthorizationService implements IAuthorizationService {
 		if (clientCredentialsTokenGenerator != null) {
 			return clientCredentialsTokenGenerator.obtainToken().getTokenValue();
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public boolean hasUserAccess() {
 		return checkForCurrentPrincipal(principal -> (hasAdminAccess() || hasRole(principal, ROLE_USER)));
@@ -130,19 +130,19 @@ public class JwtAuthorizationService implements IAuthorizationService {
 		if (currentAuth == null || currentAuth.getPrincipal() == null || tester == null) return false;
 		return tester.test(currentAuth.getPrincipal());
 	}
-	
+
 	private static boolean hasRole(Object principal, String roleName) {
 		if (principal == null) return false;
-		
+
 		Jwt accessToken = getJWT(principal);
 		if (accessToken == null) return false;
-		
+
 		Map<String, Object> realmAccess = accessToken.getClaimAsMap(CLAIM_REALM_ACCESS);
 		if (realmAccess == null) return false;
-		
+
 		List<?> roles = (List<?>) realmAccess.get(CLAIM_ROLES);
 		log.debug(String.format("Inspecting JWT token for role '%s'. Available roles: %s", roleName, roles));
-		
+
 		if (roles == null || roles.isEmpty()) return false;
 		return roles.stream().anyMatch(role -> roleName.equalsIgnoreCase(String.valueOf(role)));
 	}

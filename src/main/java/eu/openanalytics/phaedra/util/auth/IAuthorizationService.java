@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -29,13 +29,13 @@ public interface IAuthorizationService {
 
 	public void performAccessCheck(Predicate<Object> accessCheck);
 	public void performAccessCheck(Predicate<Object> accessCheck, Function<AccessDeniedException, String> messageCustomizer);
-	
+
 	public void performOwnershipCheck(String entityOwner);
 	public void performOwnershipCheck(String entityOwner, String errorMessage);
-	
+
 	public String getCurrentPrincipalName();
 	public String getCurrentBearerToken();
-	
+
 	public boolean hasUserAccess();
 	public boolean hasAdminAccess();
 	public boolean hasTeamAccess(String... teams);

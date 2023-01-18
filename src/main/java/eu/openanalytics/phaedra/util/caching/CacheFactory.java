@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -32,7 +32,7 @@ import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 public class CacheFactory {
 
 	private static final CacheManager CM = CacheManager.create();
-	
+
 	public static <T> ICache<T> createCache(String name) {
 		return createCache(new CacheConfig(name));
 	}

@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -28,7 +28,7 @@ public class AuthorizationServiceFactory {
 	public static IAuthorizationService create() {
 		return create(null);
 	}
-	
+
 	public static IAuthorizationService create(ClientCredentialsTokenGenerator ccTokenGen) {
 		if (AuthenticationConfigHelper.isInTestScope()) {
 			return new MockAuthorizationService();

@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -58,7 +58,7 @@ public class MockAuthorizationService implements IAuthorizationService {
 	public String getCurrentBearerToken() {
 		return "mock token";
 	}
-	
+
 	@Override
 	public boolean hasUserAccess() {
 		return true;

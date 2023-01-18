@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -32,7 +32,7 @@ public class ObjectCopyUtils {
 	public static void copyNonNullValues(Object from, Object to) {
 		BeanUtils.copyProperties(from, to, getNullPropertyNames(from));
 	}
-	
+
 	public static String[] getNullPropertyNames(Object bean) {
 		BeanWrapper beanWrapper = new BeanWrapperImpl(bean);
 		return Stream.of(beanWrapper.getPropertyDescriptors())

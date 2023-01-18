@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -34,7 +34,7 @@ public class AuthenticationConfigHelper {
 					.csrf().disable();
 			return http.build();
 		}
-		
+
 		http
 			.authorizeRequests()
 				.anyRequest().authenticated()
@@ -43,7 +43,7 @@ public class AuthenticationConfigHelper {
 				.oauth2ResourceServer().jwt();
 		return http.build();
 	}
-	
+
 	public static boolean isInTestScope() {
 		if (Boolean.valueOf(System.getProperty("phaedra2.testmode"))) return true;
 		try {
