@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2022 Open Analytics
+ * Copyright (C) 2016-2023 Open Analytics
  *
  * ===========================================================================
  *
@@ -23,7 +23,7 @@ package eu.openanalytics.phaedra.util.versioning;
 public interface IVersioningScheme {
 
 	public String generateInitialVersion();
-	
+
 	public String incrementVersion(String currentVersion);
 
 	public boolean isValidVersion(String version);
