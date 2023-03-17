@@ -22,7 +22,9 @@ package eu.openanalytics.phaedra.util.exceptionhandling;
 
 abstract public class EntityNotFoundException extends UserVisibleException {
 
-    public EntityNotFoundException(String msg) {
+	private static final long serialVersionUID = -5466676109143219017L;
+
+	public EntityNotFoundException(String msg) {
         super(msg);
     }
 

@@ -26,7 +26,9 @@ package eu.openanalytics.phaedra.util.exceptionhandling;
  */
 public class UserVisibleException extends Exception {
 
-    public UserVisibleException(String msg) {
+	private static final long serialVersionUID = 9070767463372421389L;
+
+	public UserVisibleException(String msg) {
         super(msg);
     }
 
