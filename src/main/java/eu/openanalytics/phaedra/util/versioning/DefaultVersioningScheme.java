@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class DefaultVersioningScheme implements IVersioningScheme {
 
 	private static final String INITIAL_VERSION = "1.0.0";
@@ -33,19 +35,31 @@ public class DefaultVersioningScheme implements IVersioningScheme {
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd.hhmmss");
 
 	@Override
-	public String generateInitialVersion() {
-		return String.format("%s-%s", INITIAL_VERSION, generateSuffix());
+	public String generateInitialVersion(boolean includeSuffix) {
+		String versionString = INITIAL_VERSION;
+		if (includeSuffix) {
+			versionString = String.format("%s-%s", versionString, generateSuffix());
+		}	
+		return versionString;
 	}
 
 	@Override
-	public String incrementVersion(String currentVersion) {
+	public String incrementVersion(String currentVersion, boolean includeSuffix) {
+		if (StringUtils.isBlank(currentVersion)) {
+			return generateInitialVersion(includeSuffix);
+		}
+		
 		Matcher matcher = VERSION_FORMAT.matcher(currentVersion);
 		if (!matcher.matches()) throw new IllegalArgumentException(String.format("%s is not a valid version number", currentVersion));
 
 		int[] digits = new int[] { Integer.valueOf(matcher.group(1)), Integer.valueOf(matcher.group(2)), Integer.valueOf(matcher.group(3)) };
 		incrementVersionDigits(digits);
 
-		return String.format("%d.%d.%d-%s", digits[0], digits[1], digits[2], generateSuffix());
+		String versionString = String.format("%d.%d.%d", digits[0], digits[1], digits[2]);
+		if (includeSuffix) {
+			versionString = String.format("%s-%s", versionString, generateSuffix());
+		}
+		return versionString;
 	}
 
 	@Override

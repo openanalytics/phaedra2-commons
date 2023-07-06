@@ -27,10 +27,14 @@ public class VersionUtils {
 	private static final IVersioningScheme VERSIONING_SCHEME = new DefaultVersioningScheme();
 
 	public static String generateNewVersion(String currentVersion) {
+		return generateNewVersion(currentVersion, true);
+	}
+	
+	public static String generateNewVersion(String currentVersion, boolean includeSuffix) {
 		if (StringUtils.isBlank(currentVersion)) {
-			return VERSIONING_SCHEME.generateInitialVersion();
+			return VERSIONING_SCHEME.generateInitialVersion(includeSuffix);
         } else {
-        	return VERSIONING_SCHEME.incrementVersion(currentVersion);
+        	return VERSIONING_SCHEME.incrementVersion(currentVersion, includeSuffix);
         }
 	}
 

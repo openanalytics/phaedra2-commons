@@ -22,9 +22,9 @@ package eu.openanalytics.phaedra.util.versioning;
 
 public interface IVersioningScheme {
 
-	public String generateInitialVersion();
+	public String generateInitialVersion(boolean includeSuffix);
 
-	public String incrementVersion(String currentVersion);
+	public String incrementVersion(String currentVersion, boolean includeSuffix);
 
 	public boolean isValidVersion(String version);
 
