@@ -29,4 +29,11 @@ public class Scalars {
                 .description("Java util Date as scalar.")
                 .coercing(new DateScalar()).build();
     }
+
+    public static GraphQLScalarType floatNaNType() {
+        return GraphQLScalarType.newScalar()
+                .name("FloatNaN")
+                .description("Custom scalar for handling NaN values")
+                .coercing(new FloatNaNScalar()).build();
+    }
 }
