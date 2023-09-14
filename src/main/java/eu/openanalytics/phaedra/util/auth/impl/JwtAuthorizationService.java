@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -125,6 +126,17 @@ public class JwtAuthorizationService implements IAuthorizationService {
 		return checkForCurrentPrincipal(principal -> hasAdminAccess() || Arrays.stream(teams).anyMatch(team -> hasRole(principal, ROLE_TEAM_PREFIX + team)));
 	}
 
+	@Override
+	public void runInKafkaContext(Runnable task) {
+		final Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+		try {
+			SecurityContextHolder.getContext().setAuthentication(new KafkaAuthentication());
+			task.run();
+		} finally {
+			SecurityContextHolder.getContext().setAuthentication(currentAuth);
+		}
+	}
+	
 	private static boolean checkForCurrentPrincipal(Predicate<Object> tester) {
 		Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
 		if (currentAuth == null || currentAuth.getPrincipal() == null || tester == null) return false;
@@ -133,6 +145,8 @@ public class JwtAuthorizationService implements IAuthorizationService {
 
 	private static boolean hasRole(Object principal, String roleName) {
 		if (principal == null) return false;
+
+		if (principal.equals(KafkaAuthentication.PRINCIPAL)) return true;
 
 		Jwt accessToken = getJWT(principal);
 		if (accessToken == null) return false;
@@ -155,5 +169,25 @@ public class JwtAuthorizationService implements IAuthorizationService {
 			log.debug(String.format("Unsupported principal type: %s. Only JWTs are supported.", principal));
 		}
 		return accessToken;
+	}
+	
+	private static class KafkaAuthentication extends AbstractAuthenticationToken {
+
+		private static final long serialVersionUID = -6574504446597627288L;
+		private static final String PRINCIPAL = KafkaAuthentication.class.getSimpleName();
+		
+		public KafkaAuthentication() {
+			super(null);
+		}
+
+		@Override
+		public Object getCredentials() {
+			return PRINCIPAL;
+		}
+
+		@Override
+		public Object getPrincipal() {
+			return PRINCIPAL;
+		}
 	}
 }

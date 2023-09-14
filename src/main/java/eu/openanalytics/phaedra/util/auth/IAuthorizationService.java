@@ -39,5 +39,12 @@ public interface IAuthorizationService {
 	public boolean hasUserAccess();
 	public boolean hasAdminAccess();
 	public boolean hasTeamAccess(String... teams);
+	
+	/**
+	 * Execute a task in the context of Kafka.
+	 * This means any authorization checks will automatically succeed.
+	 * TODO This is a temporary solution, and will be replaced with authorization checks based on message headers.
+	 */
+	public void runInKafkaContext(Runnable task);
 
 }

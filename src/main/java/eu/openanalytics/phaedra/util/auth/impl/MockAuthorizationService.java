@@ -74,4 +74,8 @@ public class MockAuthorizationService implements IAuthorizationService {
 		return true;
 	}
 
+	@Override
+	public void runInKafkaContext(Runnable task) {
+		task.run();
+	}
 }
