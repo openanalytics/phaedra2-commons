@@ -18,49 +18,14 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.phaedra.util.caching.model.impl;
+package eu.openanalytics.phaedra.util.versioning;
 
-import java.util.Collections;
-import java.util.List;
+public interface IVersioningScheme {
 
-import eu.openanalytics.phaedra.util.caching.model.CacheKey;
-import eu.openanalytics.phaedra.util.caching.model.ICache;
+	public String generateInitialVersion(boolean includeSuffix);
 
-public class NoopCache <T> implements ICache<T> {
+	public String incrementVersion(String currentVersion, boolean includeSuffix);
 
-	@Override
-	public String getName() {
-		return "No-op Cache";
-	}
-
-	@Override
-	public T get(CacheKey key) {
-		return null;
-	}
-
-	@Override
-	public T put(CacheKey key, T value) {
-		return value;
-	}
-
-	@Override
-	public boolean remove(CacheKey key) {
-		return false;
-	}
-
-	@Override
-	public boolean contains(CacheKey key) {
-		return false;
-	}
-
-	@Override
-	public List<CacheKey> getKeys() {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public void clear() {
-		// No-op
-	}
+	public boolean isValidVersion(String version);
 
 }

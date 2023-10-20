@@ -18,49 +18,27 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.phaedra.util.caching.model.impl;
+package eu.openanalytics.phaedra.util;
 
-import java.util.Collections;
-import java.util.List;
+import java.beans.FeatureDescriptor;
+import java.util.stream.Stream;
 
-import eu.openanalytics.phaedra.util.caching.model.CacheKey;
-import eu.openanalytics.phaedra.util.caching.model.ICache;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 
-public class NoopCache <T> implements ICache<T> {
+public class ObjectCopyUtils {
 
-	@Override
-	public String getName() {
-		return "No-op Cache";
+	public static void copyNonNullValues(Object from, Object to) {
+		BeanUtils.copyProperties(from, to, getNullPropertyNames(from));
 	}
 
-	@Override
-	public T get(CacheKey key) {
-		return null;
-	}
-
-	@Override
-	public T put(CacheKey key, T value) {
-		return value;
-	}
-
-	@Override
-	public boolean remove(CacheKey key) {
-		return false;
-	}
-
-	@Override
-	public boolean contains(CacheKey key) {
-		return false;
-	}
-
-	@Override
-	public List<CacheKey> getKeys() {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public void clear() {
-		// No-op
+	public static String[] getNullPropertyNames(Object bean) {
+		BeanWrapper beanWrapper = new BeanWrapperImpl(bean);
+		return Stream.of(beanWrapper.getPropertyDescriptors())
+				.map(FeatureDescriptor::getName)
+				.filter(prop -> beanWrapper.getPropertyValue(prop) == null)
+				.toArray(String[]::new);
 	}
 
 }

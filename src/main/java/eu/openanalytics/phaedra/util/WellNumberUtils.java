@@ -1,3 +1,23 @@
+/**
+ * Phaedra II
+ *
+ * Copyright (C) 2016-2023 Open Analytics
+ *
+ * ===========================================================================
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the Apache License as published by
+ * The Apache Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * Apache License for more details.
+ *
+ * You should have received a copy of the Apache License
+ * along with this program.  If not, see <http://www.apache.org/licenses/>
+ */
 package eu.openanalytics.phaedra.util;
 
 import java.util.regex.Matcher;
@@ -15,7 +35,7 @@ public class WellNumberUtils {
 	public static String getWellCoordinate(int row, int col) {
 		return getWellCoordinate(row, col, null);
 	}
-	
+
 	/**
 	 * Get the well coordinate from a well row nr and column nr.
 	 * E.g. 13,24 becomes "M24"
@@ -24,7 +44,7 @@ public class WellNumberUtils {
 		if (separator == null) separator = "";
 		return getWellRowLabel(row) + separator + col;
 	}
-	
+
 	/**
 	 * Get the row label for a well row nr.
 	 * E.g. 4 becomes "D"
@@ -41,11 +61,11 @@ public class WellNumberUtils {
 		}
 		return rowString;
 	}
-	
+
 	/**
 	 * Convert a well coordinate to a well number, starting at 1.
 	 * E.g. "C10" with 12 columns per row becomes 34
-	 * 
+	 *
 	 * @param coordinate The well coordinate, e.g. "P24" or "R10-C12".
 	 * @param colsPerRow The number of columns in the plate, e.g. 12 or 24.
 	 */
@@ -64,11 +84,11 @@ public class WellNumberUtils {
 		int value = (row-1)*colsPerRow + col;
 		return value;
 	}
-	
+
 	/**
 	 * Get the well position from a well number.
 	 * E.g. wellNr 96 with 12 columns per row becomes [8,12]
-	 * 
+	 *
 	 * @param wellNr The well number, starting from 1.
 	 * @param colsPerRow The number of columns in the plate, e.g. 12 or 24.
 	 */
@@ -78,7 +98,7 @@ public class WellNumberUtils {
 		int colNr = 1 + wellNr % colsPerRow;
 		return new int[]{rowNr,colNr};
 	}
-	
+
 	public static int getWellRowNumber(String wellCoordinate) {
 		Matcher matcher = WELL_COORD_PATTERN.matcher(wellCoordinate);
 		if (matcher.matches()) {

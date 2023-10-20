@@ -18,49 +18,21 @@
  * You should have received a copy of the Apache License
  * along with this program.  If not, see <http://www.apache.org/licenses/>
  */
-package eu.openanalytics.phaedra.util.caching.model.impl;
+package eu.openanalytics.phaedra.util.auth;
 
-import java.util.Collections;
-import java.util.List;
+import eu.openanalytics.phaedra.util.auth.impl.JwtAuthorizationService;
+import eu.openanalytics.phaedra.util.auth.impl.MockAuthorizationService;
 
-import eu.openanalytics.phaedra.util.caching.model.CacheKey;
-import eu.openanalytics.phaedra.util.caching.model.ICache;
+public class AuthorizationServiceFactory {
 
-public class NoopCache <T> implements ICache<T> {
-
-	@Override
-	public String getName() {
-		return "No-op Cache";
+	public static IAuthorizationService create() {
+		return create(null);
 	}
 
-	@Override
-	public T get(CacheKey key) {
-		return null;
+	public static IAuthorizationService create(ClientCredentialsTokenGenerator ccTokenGen) {
+		if (AuthenticationConfigHelper.isInTestScope()) {
+			return new MockAuthorizationService();
+		}
+		return new JwtAuthorizationService(ccTokenGen);
 	}
-
-	@Override
-	public T put(CacheKey key, T value) {
-		return value;
-	}
-
-	@Override
-	public boolean remove(CacheKey key) {
-		return false;
-	}
-
-	@Override
-	public boolean contains(CacheKey key) {
-		return false;
-	}
-
-	@Override
-	public List<CacheKey> getKeys() {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public void clear() {
-		// No-op
-	}
-
 }
