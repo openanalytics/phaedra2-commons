@@ -25,13 +25,11 @@ pipeline {
         stage('Build') {
             steps {
                 container('builder') {
-
-                    configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
-
-                        sh 'mvn -s $MAVEN_SETTINGS_RSB -U clean install -DskipTests -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
-
+                    withDockerRegistry([credentialsId: "oa-sa-jenkins-registry", url: "https://registry.openanalytics.eu"]) {
+                        configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
+                            sh 'mvn -s $MAVEN_SETTINGS_RSB -U clean install -DskipTests -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
+                        }
                     }
-
                 }
             }
         }
@@ -39,13 +37,11 @@ pipeline {
         stage('Test') {
             steps {
                 container('builder') {
-
-                    configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
-
-                        sh 'mvn -s $MAVEN_SETTINGS_RSB test -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
-
+                    withDockerRegistry([credentialsId: "oa-sa-jenkins-registry", url: "https://registry.openanalytics.eu"]) {
+                        configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
+                            sh 'mvn -s $MAVEN_SETTINGS_RSB test -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
+                        }
                     }
-
                 }
             }
         }
@@ -53,13 +49,11 @@ pipeline {
         stage("Deploy to Nexus") {
             steps {
                 container('builder') {
-
-                    configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
-
-                        sh 'mvn -s $MAVEN_SETTINGS_RSB deploy -DskipTests -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
-
+                    withDockerRegistry([credentialsId: "oa-sa-jenkins-registry", url: "https://registry.openanalytics.eu"]) {
+                        configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
+                            sh 'mvn -s $MAVEN_SETTINGS_RSB deploy -DskipTests -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
+                        }
                     }
-
                 }
             }
         }
