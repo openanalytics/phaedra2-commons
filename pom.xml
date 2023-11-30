@@ -9,7 +9,7 @@
 
     <properties>
         <java.version>16</java.version>
-        <gitflow-maven.version>1.20.0</gitflow-maven.version>
+<!--        <gitflow-maven.version>1.20.0</gitflow-maven.version>-->
     </properties>
 
     <parent>
@@ -59,12 +59,12 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-        
-        <dependency>
-			<groupId>com.amashchenko.maven.plugin</groupId>
-            <artifactId>gitflow-maven-plugin</artifactId>
-            <version>${gitflow-maven.version}</version>
-        </dependency>
+
+<!--        <dependency>-->
+<!--			<groupId>com.amashchenko.maven.plugin</groupId>-->
+<!--            <artifactId>gitflow-maven-plugin</artifactId>-->
+<!--            <version>${gitflow-maven.version}</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <distributionManagement>
@@ -127,11 +127,11 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-		        <groupId>com.amashchenko.maven.plugin</groupId>
-		        <artifactId>gitflow-maven-plugin</artifactId>
-		        <version>${gitflow-maven.version}</version>
-		    </plugin>
+<!--            <plugin>-->
+<!--		        <groupId>com.amashchenko.maven.plugin</groupId>-->
+<!--		        <artifactId>gitflow-maven-plugin</artifactId>-->
+<!--		        <version>${gitflow-maven.version}</version>-->
+<!--		    </plugin>-->
         </plugins>
     </build>
 </project>
