@@ -35,7 +35,7 @@ import java.util.Date;
 
 public class DateScalar implements Coercing<Date, String> {
 
-    private final String dateTimePattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX";
+    private final String dateTimePattern = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
     @Override
     public String serialize(final Object dataFetcherResult) {
