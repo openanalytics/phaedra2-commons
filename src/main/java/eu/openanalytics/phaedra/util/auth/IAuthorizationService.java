@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -39,7 +39,7 @@ public interface IAuthorizationService {
 	public boolean hasUserAccess();
 	public boolean hasAdminAccess();
 	public boolean hasTeamAccess(String... teams);
-	
+
 	/**
 	 * Execute a task in the context of Kafka.
 	 * This means any authorization checks will automatically succeed.

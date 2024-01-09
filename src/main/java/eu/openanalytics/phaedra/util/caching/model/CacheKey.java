@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -39,11 +39,11 @@ public class CacheKey implements Serializable {
 	public Object getKeyPart(int i) {
 		return keyParts[i];
 	}
-	
+
 	public int getKeyLength() {
 		return keyParts.length;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

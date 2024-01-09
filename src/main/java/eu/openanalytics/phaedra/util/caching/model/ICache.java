@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -25,7 +25,7 @@ import java.util.List;
 public interface ICache<T> {
 
 	public String getName();
-	
+
 	public T get(CacheKey key);
 
 	public T put(CacheKey key, T value);

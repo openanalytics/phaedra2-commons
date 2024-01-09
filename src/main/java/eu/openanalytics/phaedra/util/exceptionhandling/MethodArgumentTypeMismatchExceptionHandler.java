@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -36,7 +36,7 @@ public interface MethodArgumentTypeMismatchExceptionHandler {
     	Map<String, Object> exceptionInfo = new HashMap<>();
     	exceptionInfo.put("status", "error");
     	exceptionInfo.put("error", "Validation error");
-    	
+
     	Map<String, Object> malformedFields = new HashMap<>();
         malformedFields.put(ex.getName(), String.format("Invalid value (\"%s\") provided", ex.getValue()));
         exceptionInfo.put("malformed_fields", malformedFields);

@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -39,7 +39,7 @@ public class DefaultVersioningScheme implements IVersioningScheme {
 		String versionString = INITIAL_VERSION;
 		if (includeSuffix) {
 			versionString = String.format("%s-%s", versionString, generateSuffix());
-		}	
+		}
 		return versionString;
 	}
 
@@ -48,7 +48,7 @@ public class DefaultVersioningScheme implements IVersioningScheme {
 		if (StringUtils.isBlank(currentVersion)) {
 			return generateInitialVersion(includeSuffix);
 		}
-		
+
 		Matcher matcher = VERSION_FORMAT.matcher(currentVersion);
 		if (!matcher.matches()) throw new IllegalArgumentException(String.format("%s is not a valid version number", currentVersion));
 

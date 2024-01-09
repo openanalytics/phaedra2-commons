@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -40,7 +40,7 @@ public class EhCacheHeap<T> implements ICache<T> {
 	public String getName() {
 		return name;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public T get(CacheKey key) {
 		Element element = cache.get(key);
@@ -56,7 +56,7 @@ public class EhCacheHeap<T> implements ICache<T> {
 	public boolean remove(CacheKey key) {
 		return cache.remove(key);
 	}
-	
+
 	public boolean contains(CacheKey key) {
 		// Workaround: isKeyInCache may return true for expired elements.
 		// Fetching the element here is slower, but forces eviction of expired elements.
