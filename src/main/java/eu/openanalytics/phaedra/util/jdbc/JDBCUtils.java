@@ -102,6 +102,10 @@ public class JDBCUtils {
 			if (schema != null && !schema.trim().isEmpty()) {
 				config.setSchema(schema);
 				config.setConnectionInitSql("set search_path to " + schema);
+				if (!url.toLowerCase().contains("currentschema")) {
+					// Fix: setSchema keeps resetting in Hikari, see https://github.com/brettwooldridge/HikariCP/issues/1633
+					config.setJdbcUrl(url + "?currentSchema=" + schema);
+				}
 			}
 			return new HikariDataSource(config);
 		} else {
