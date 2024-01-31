@@ -26,6 +26,7 @@ import java.util.Optional;
 import javax.sql.DataSource;
 
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -74,31 +75,45 @@ public class JDBCUtils {
 		return (date == null) ? null : Timestamp.from(date.toInstant());
 	}
 	
-	public static DataSource createDataSource(Environment environment) {      
+	public static DataSource createDataSource(Environment environment) {
         String url = environment.getProperty("DB_URL");
 		if (url == null || url.trim().isEmpty()) {
 			throw new RuntimeException("No database URL configured: DB_URL");
 		}
-		String driverClassName = JDBCUtils.getDriverClassName(url);
+		String driverClassName = getDriverClassName(url);
 		if (driverClassName == null) {
 			throw new RuntimeException("Unsupported database type: " + url);
 		}
 
-		HikariConfig config = new HikariConfig();
-		config.setAutoCommit(false);
-		config.setMaximumPoolSize(20);
-		config.setConnectionTimeout(60000);
-		config.setJdbcUrl(url);
-		config.setDriverClassName(driverClassName);
-		config.setUsername(environment.getProperty("DB_USER"));
-		config.setPassword(environment.getProperty("DB_PASSWORD"));
-
+		String username = environment.getProperty("DB_USER");
+		String password = environment.getProperty("DB_PASSWORD");
 		String schema = environment.getProperty("DB_SCHEMA");
-		if (schema != null && !schema.trim().isEmpty()) {
-			config.setSchema(schema);
-			config.setConnectionInitSql("set search_path to " + schema);
+		int connectionPoolSize = Integer.valueOf(environment.getProperty("DB_POOL_SIZE", "1"));
+		
+		if (connectionPoolSize > 1) {
+			HikariConfig config = new HikariConfig();
+			config.setAutoCommit(false);
+			config.setMaximumPoolSize(connectionPoolSize);
+			config.setConnectionTimeout(60000);
+			config.setJdbcUrl(url);
+			config.setDriverClassName(driverClassName);
+			config.setUsername(username);
+			config.setPassword(password);
+			if (schema != null && !schema.trim().isEmpty()) {
+				config.setSchema(schema);
+				config.setConnectionInitSql("set search_path to " + schema);
+			}
+			return new HikariDataSource(config);
+		} else {
+			DriverManagerDataSource dataSource = new DriverManagerDataSource();
+			dataSource.setDriverClassName(driverClassName);
+			dataSource.setUrl(url);
+			dataSource.setUsername(username);
+			dataSource.setPassword(password);
+			if (schema != null && !schema.trim().isEmpty()) {
+				dataSource.setSchema(schema);
+			}
+			return dataSource;
 		}
-
-		return new HikariDataSource(config);
     }
 }
