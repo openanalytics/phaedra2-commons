@@ -23,6 +23,13 @@ package eu.openanalytics.phaedra.util.jdbc;
 import java.sql.Timestamp;
 import java.util.Optional;
 
+import javax.sql.DataSource;
+
+import org.springframework.core.env.Environment;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 public class JDBCUtils {
 
 	private enum DbType {
@@ -66,4 +73,32 @@ public class JDBCUtils {
 	public static Timestamp toTimestamp(java.util.Date date) {
 		return (date == null) ? null : Timestamp.from(date.toInstant());
 	}
+	
+	public static DataSource createDataSource(Environment environment) {      
+        String url = environment.getProperty("DB_URL");
+		if (url == null || url.trim().isEmpty()) {
+			throw new RuntimeException("No database URL configured: DB_URL");
+		}
+		String driverClassName = JDBCUtils.getDriverClassName(url);
+		if (driverClassName == null) {
+			throw new RuntimeException("Unsupported database type: " + url);
+		}
+
+		HikariConfig config = new HikariConfig();
+		config.setAutoCommit(false);
+		config.setMaximumPoolSize(20);
+		config.setConnectionTimeout(60000);
+		config.setJdbcUrl(url);
+		config.setDriverClassName(driverClassName);
+		config.setUsername(environment.getProperty("DB_USERNAME"));
+		config.setPassword(environment.getProperty("DB_PASSWORD"));
+
+		String schema = environment.getProperty("DB_SCHEMA");
+		if (schema != null && !schema.trim().isEmpty()) {
+			config.setSchema(schema);
+			config.setConnectionInitSql("set search_path to " + schema);
+		}
+
+		return new HikariDataSource(config);
+    }
 }
