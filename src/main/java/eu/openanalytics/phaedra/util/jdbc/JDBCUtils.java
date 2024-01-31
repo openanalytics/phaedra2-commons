@@ -90,7 +90,7 @@ public class JDBCUtils {
 		config.setConnectionTimeout(60000);
 		config.setJdbcUrl(url);
 		config.setDriverClassName(driverClassName);
-		config.setUsername(environment.getProperty("DB_USERNAME"));
+		config.setUsername(environment.getProperty("DB_USER"));
 		config.setPassword(environment.getProperty("DB_PASSWORD"));
 
 		String schema = environment.getProperty("DB_SCHEMA");
