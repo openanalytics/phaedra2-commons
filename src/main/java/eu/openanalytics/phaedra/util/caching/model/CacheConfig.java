@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -26,13 +26,13 @@ public class CacheConfig {
 	public int ttl;
 	public int tti;
 	public long maxBytes;
-	
+
 	public CacheConfig() {
 		this(null);
 	}
-	
+
 	public CacheConfig(String name) {
 		this.name = name;
 	}
-	
+
 }

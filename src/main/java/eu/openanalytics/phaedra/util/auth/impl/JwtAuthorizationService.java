@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -136,7 +136,7 @@ public class JwtAuthorizationService implements IAuthorizationService {
 			SecurityContextHolder.getContext().setAuthentication(currentAuth);
 		}
 	}
-	
+
 	private static boolean checkForCurrentPrincipal(Predicate<Object> tester) {
 		Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
 		if (currentAuth == null || currentAuth.getPrincipal() == null || tester == null) return false;
@@ -170,12 +170,12 @@ public class JwtAuthorizationService implements IAuthorizationService {
 		}
 		return accessToken;
 	}
-	
+
 	private static class KafkaAuthentication extends AbstractAuthenticationToken {
 
 		private static final long serialVersionUID = -6574504446597627288L;
 		private static final String PRINCIPAL = KafkaAuthentication.class.getSimpleName();
-		
+
 		public KafkaAuthentication() {
 			super(null);
 		}

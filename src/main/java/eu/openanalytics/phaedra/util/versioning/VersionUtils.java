@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2023 Open Analytics
+ * Copyright (C) 2016-2024 Open Analytics
  *
  * ===========================================================================
  *
@@ -29,7 +29,7 @@ public class VersionUtils {
 	public static String generateNewVersion(String currentVersion) {
 		return generateNewVersion(currentVersion, true);
 	}
-	
+
 	public static String generateNewVersion(String currentVersion, boolean includeSuffix) {
 		if (StringUtils.isBlank(currentVersion)) {
 			return VERSIONING_SCHEME.generateInitialVersion(includeSuffix);
