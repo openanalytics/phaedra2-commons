@@ -50,11 +50,11 @@ fi
 
 # Commit updated pom files
 find . -name 'pom.xml' | xargs git add
-git commit -m "Updated version to the next development snapshot"
+git commit -m "Updated version to the next development snapshot" || echo "Proceeding, no child project pom.xml files to commit"
 
 # --------------------------------------------------------------
 # Step 5: push all branches and tags, cleanup
 # --------------------------------------------------------------
 
-#git push origin develop master --tags
+git push origin develop master --tags
 find . -name "pom.xml.versionsBackup" -type f | xargs rm
