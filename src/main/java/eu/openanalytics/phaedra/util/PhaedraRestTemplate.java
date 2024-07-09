@@ -31,7 +31,7 @@ import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -56,9 +56,9 @@ public class PhaedraRestTemplate extends RestTemplate {
             } else {
                 rightPad(stringBuilder, "Ok", 4);
             }
-            rightPad(stringBuilder, String.valueOf(response.getRawStatusCode()), 3);
+            rightPad(stringBuilder, String.valueOf(response.getStatusCode().value()), 3);
             rightPad(stringBuilder, stop - start + "ms", 6);
-            rightPad(stringBuilder, request.getMethodValue(), 4);
+            rightPad(stringBuilder, request.getMethod().name(), 4);
             rightPad(stringBuilder, request.getURI().toString(), -1);
             logger.info(stringBuilder.toString());
 
