@@ -34,7 +34,7 @@ git commit -m "Updated version to $release_version"
 # Step 3: gitflow release
 # --------------------------------------------------------------
 
-mvn -B -DskipTestProject=true -DpushRemote=false gitflow:release-start gitflow:release-finish
+mvn -B -DskipTestProject=true -DpushRemote=false -DversionDigitToIncrement=1 gitflow:release-start gitflow:release-finish
 
 # --------------------------------------------------------------
 # Step 4: modify version numbers in the POM files (for the next snapshot)
@@ -50,11 +50,11 @@ fi
 
 # Commit updated pom files
 find . -name 'pom.xml' | xargs git add
-git commit -m "Updated version to the next development snapshot"
+git commit -m "Updated version to the next development snapshot" || echo "Proceeding, no child project pom.xml files to commit"
 
 # --------------------------------------------------------------
 # Step 5: push all branches and tags, cleanup
 # --------------------------------------------------------------
 
-#git push origin develop master --tags
+git push origin develop master --tags
 find . -name "pom.xml.versionsBackup" -type f | xargs rm
