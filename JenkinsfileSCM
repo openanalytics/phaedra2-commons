@@ -7,7 +7,16 @@ pipeline {
     }
 
     options {
+        authorizationMatrix inheritanceStrategy: inheritingGlobal(), entries: [
+              group(name: 'oa-infrastructure', permissions: ['Job/Build', 'Job/Read']),
+              group(name: 'phaedra', permissions: ['Job/Build', 'Job/Read'])
+          ]
         buildDiscarder(logRotator(numToKeepStr: '3'))
+    }
+
+    environment {
+        AWS_ROLE_ARN = 'arn:aws:iam::172595356353:role/jenkins-role-oa-prod-phaedra-io'
+        AWS_WEB_IDENTITY_TOKEN_FILE = credentials('aws-jwt')
     }
 
     stages {
