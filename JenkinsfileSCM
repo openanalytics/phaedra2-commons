@@ -2,9 +2,7 @@ pipeline {
 
     agent {
         kubernetes {
-            inheritFrom 'default'
             yamlFile 'kubernetesPod.yaml'
-            yamlMergeStrategy merge()
         }
     }
 
