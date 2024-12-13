@@ -99,8 +99,7 @@ public class JwtAuthorizationService implements IAuthorizationService {
 		Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
 		if (currentAuth != null) {
 			Jwt accessToken = getJWT(currentAuth.getPrincipal());
-			if (accessToken == null) return null;
-			return accessToken.getTokenValue();
+			if (accessToken != null) return accessToken.getTokenValue();
 		}
 
 		// Attempt to use client credentials, if there is no user auth context
