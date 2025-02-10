@@ -58,3 +58,4 @@ git commit -m "Updated version to the next development snapshot" || echo "Procee
 
 git push origin develop master --tags
 find . -name "pom.xml.versionsBackup" -type f | xargs rm
+# Test comment
