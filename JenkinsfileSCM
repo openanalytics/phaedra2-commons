@@ -1,5 +1,4 @@
 pipeline {
-
     agent {
         kubernetes {
             inheritFrom "default"
@@ -11,9 +10,23 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '3'))
     }
+    
+    parameters {
+        string(name: 'BUILD_TYPE', defaultValue: 'default')
+    }
 
     stages {
-       stage('Build') {
+        stage('Initialize') {
+		    when {
+			    branch 'master'
+                expression { params.BUILD_TYPE != 'product_release' }
+            }
+            steps {
+                script { currentBuild.result = 'ABORTED' }
+                error 'Build of the master branch can only be invoked as part of the product_release'
+            }
+	    }
+        stage('Build') {
             steps {
                 container('builder') {
                     configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
@@ -22,7 +35,6 @@ pipeline {
                 }
             }
         }
-
         stage('Test') {
             steps {
                 container('builder') {
@@ -32,7 +44,6 @@ pipeline {
                 }
             }
         }
-
         stage("Deploy to Nexus") {
             steps {
                 container('builder') {
