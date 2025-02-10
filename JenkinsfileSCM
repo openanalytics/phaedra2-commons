@@ -18,12 +18,12 @@ pipeline {
     stages {
         stage('Initialize') {
 		    when {
-			    branch 'develop'
+			    branch 'master'
                 expression { params.BUILD_TYPE != 'product_release' }
             }
             steps {
                 script { currentBuild.result = 'ABORTED' }
-                error 'Build of the develop branch can only be invoked as part of the product_release'
+                error 'Build of the master branch can only be invoked as part of the product_release'
             }
 	    }
         stage('Build') {
