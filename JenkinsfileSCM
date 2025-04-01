@@ -1,9 +1,8 @@
 pipeline {
     agent {
         kubernetes {
-            inheritFrom "default"
             yamlFile 'kubernetesPod.yaml'
-            yamlMergeStrategy merge()
+            defaultContainer 'builder'
         }
     }
 
@@ -30,7 +29,7 @@ pipeline {
             steps {
                 container('builder') {
                     configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
-                        sh 'mvn -s $MAVEN_SETTINGS_RSB -U clean install -DskipTests -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
+                        sh 'mvn -s $MAVEN_SETTINGS_RSB -B -U clean install -DskipTests -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
                     }
                 }
             }
@@ -39,7 +38,7 @@ pipeline {
             steps {
                 container('builder') {
                     configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
-                        sh 'mvn -s $MAVEN_SETTINGS_RSB test -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
+                        sh 'mvn -s $MAVEN_SETTINGS_RSB -B test -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
                     }
                 }
             }
@@ -48,7 +47,7 @@ pipeline {
             steps {
                 container('builder') {
                     configFileProvider([configFile(fileId: 'maven-settings-rsb', variable: 'MAVEN_SETTINGS_RSB')]) {
-                        sh 'mvn -s $MAVEN_SETTINGS_RSB deploy -DskipTests -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
+                        sh 'mvn -s $MAVEN_SETTINGS_RSB -B deploy -DskipTests -Ddockerfile.skip -Dmaven.repo.local=/home/jenkins/maven-repository'
                     }
                 }
             }
