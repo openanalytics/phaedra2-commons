@@ -7,6 +7,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,6 +40,8 @@ public class ScriptExecutionManager {
 	private ObjectMapper objectMapper;
 	private KafkaTemplate<String, Object> kafkaTemplate;
 	private Map<String, ScriptExecution> activeExecutions;
+	
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	public ScriptExecutionManager(ObjectMapper objectMapper, KafkaTemplate<String, Object> kafkaTemplate) {
 		this.objectMapper = objectMapper;
@@ -86,7 +90,8 @@ public class ScriptExecutionManager {
 		try {
 			response = objectMapper.readValue(message, ScriptExecutionResponse.class);
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("Failed to parse kafka message as ScriptExecutionOutput", e);
+			logger.warn("Ignoring Kafka message not matching ScriptExecutionOutput structure");
+			return;
 		}
 		
 		ScriptExecution execution = activeExecutions.get(response.getInputId());
