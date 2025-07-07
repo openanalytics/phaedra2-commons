@@ -1,7 +1,7 @@
 /**
  * Phaedra II
  *
- * Copyright (C) 2016-2024 Open Analytics
+ * Copyright (C) 2016-2025 Open Analytics
  *
  * ===========================================================================
  *
@@ -43,10 +43,15 @@ public class JwtAuthorizationService implements IAuthorizationService {
 
 	private static final String CLAIM_REALM_ACCESS = "realm_access";
 	private static final String CLAIM_ROLES = "roles";
-	private static final String ROLE_ADMIN = "phaedra2-admin";
-	private static final String ROLE_USER = "phaedra2-user";
-	private static final String ROLE_TEAM_PREFIX = "phaedra2-team-";
 	private static final String DEFAULT_ACCESS_DENIED_MSG = "Not authorized to perform this operation";
+
+	private static final String ROLE_NAME_ADMIN = "ROLE_NAME_ADMIN";
+	private static final String ROLE_NAME_USER = "ROLE_NAME_USER";
+	private static final String ROLE_TEAM_PREFIX = "ROLE_PREFIX_TEAM";
+	
+	private static final String DEFAULT_ROLE_ADMIN = "phaedra-admin";
+	private static final String DEFAULT_ROLE_USER = "phaedra-user";
+	private static final String DEFAULT_ROLE_TEAM_PREFIX = "phaedra-team-";
 
 	private static final Logger log = LoggerFactory.getLogger(JwtAuthorizationService.class);
 
@@ -112,17 +117,20 @@ public class JwtAuthorizationService implements IAuthorizationService {
 
 	@Override
 	public boolean hasUserAccess() {
-		return checkForCurrentPrincipal(principal -> (hasAdminAccess() || hasRole(principal, ROLE_USER)));
+		String roleName = getRoleName(ROLE_NAME_USER, DEFAULT_ROLE_USER);
+		return checkForCurrentPrincipal(principal -> (hasAdminAccess() || hasRole(principal, roleName)));
 	}
 
 	@Override
 	public boolean hasAdminAccess() {
-		return checkForCurrentPrincipal(principal -> hasRole(principal, ROLE_ADMIN));
+		String roleName = getRoleName(ROLE_NAME_ADMIN, DEFAULT_ROLE_ADMIN);
+		return checkForCurrentPrincipal(principal -> hasRole(principal, roleName));
 	}
 
 	@Override
 	public boolean hasTeamAccess(String... teams) {
-		return checkForCurrentPrincipal(principal -> hasAdminAccess() || Arrays.stream(teams).anyMatch(team -> hasRole(principal, ROLE_TEAM_PREFIX + team)));
+		String rolePrefix = getRoleName(ROLE_TEAM_PREFIX, DEFAULT_ROLE_TEAM_PREFIX);
+		return checkForCurrentPrincipal(principal -> hasAdminAccess() || Arrays.stream(teams).anyMatch(team -> hasRole(principal, rolePrefix + team)));
 	}
 
 	@Override
@@ -158,6 +166,12 @@ public class JwtAuthorizationService implements IAuthorizationService {
 
 		if (roles == null || roles.isEmpty()) return false;
 		return roles.stream().anyMatch(role -> roleName.equalsIgnoreCase(String.valueOf(role)));
+	}
+
+	private static String getRoleName(String roleNameKey, String defaultRoleName) {
+		String name = System.getenv(roleNameKey);
+		if (name == null || name.isBlank()) name = defaultRoleName;
+		return name;
 	}
 
 	private static Jwt getJWT(Object principal) {
